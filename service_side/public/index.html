@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="js/socket.io.js"></script>
+    <style>
+        *{
+            margin: 1px 1px 1px 1px;
+        }
+        .button{
+            width: 100px;
+            height: 100px;
+            background: #cccccc;
+            float: left;
+            text-align: center;
+        }
+    </style>
+</head>
+<body onload="init()">
+    <div class="controler" style="width: 220px; height: 420px; background: #fff">
+        <div class="button" onclick="clickBtn(1)">UP</div>
+        <div class="button"  onclick="clickBtn(2)">DOWN</div>
+        <div class="button"  onclick="clickBtn(3)">LEFT</div>
+        <div class="button"  onclick="clickBtn(4)">RIGHT</div>
+        <div class="button" onclick="clickBtn(5)" style="width: 203px; height: 100px; background: #006666"> CATCH</div>
+        <div class="button" onclick="clickBtn(6)" style="width: 203px; height: 100px; background: #006666"> RESET</div>
+
+    </div>
+</body>
+<script>
+    var SO={
+        io:null,
+        devid:"1",
+        init:function(){
+            console.log('init');
+            //return;
+            SO.io=io('http://localhost:3000');
+            //return;
+            SO.io.on('connect',function(data){
+                console.log("connected "+data);
+                SO.io.emit('peoplereg',{devid:SO.devid});
+            });
+            SO.io.on('event',function(e){
+                console.log(e);
+            });
+            SO.io.on('error',function(e){
+                console.log(e);
+            })
+        }
+    }
+    function init(){
+        SO.init();
+    };
+    function clickBtn(id)
+    {
+        console.log('hello~');
+        console.log(id);
+        switch(id){
+            case 1:
+                    SO.io.emit('up');
+                break;
+            case 2:
+                SO.io.emit('down');
+                break;
+            case 3:
+                SO.io.emit('left');
+                break;
+            case 4:
+                SO.io.emit('right');
+                break;
+            case 5:
+                SO.io.emit('catch');
+                break;
+            case 6:
+                SO.io.emit('init');
+                break;
+        }
+    }
+</script>
+</html>
