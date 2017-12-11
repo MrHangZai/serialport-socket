@@ -22,13 +22,13 @@ class roomManager{
     {
         this.io=SOC.listen(http);
         this.io.on('connection',(socket)=>{
-            console.log("socket--->"+socket.id+"is in");
             //娃娃机注册
             socket.on('devreg',(data)=>{
                 //{data:id} 房间id
                 var devid=data['data'];
                 if(!this.rooms[devid]){
-                    let r=new room();
+                    let r=new room(devid,this);
+                    r.roomid=devid;
                     //this.rooms[devid]=new room();
                     this.rooms[devid]=r;
                 }
@@ -40,27 +40,30 @@ class roomManager{
             socket.on('peoplein',(data)=>{
                 //{userid:'123'};
                 let id=data.id;
-                let people=PlayerManager.getPlayerById(id);
+                let people=PlayerManager.getPlayerById(id);;
                 if(people)
                 {
                     socket.emit('state',{'roomid':people.roomid});
                 }
                 else{
-                    socket.emit('state',{'roomid':null});
+                    socket.emit('state',{'roomid':null,playid:id});
                 }
             })
             //用户注册,传递房间号
             socket.on('peoplereg',(data)=>{
-                //{userid:'123',devid:'1'}
+                //{userid:'123',roomid:'1'}
                 //用户id，设备id（房间id）
                 let devid=data['roomid'];
                 let userid=data['userid'];
-
                 //根据设备id获取房间
                 let r=this.getRoom(devid);
+                console.log("ROOM SOCKET ID IS ->"+r.devSocket.id);
 
                 //如果房间号不存在，则房间不存在。
-                if(!r) {console.log("get no room");return;};
+                if(!r) {console.log("get no room");return;}
+                else{
+                    console.log('get room');
+                }
                 //房间存在的情况，获取/新建用户
                 let people=PlayerManager.getPlayerById(userid);
                 if(!people) {
@@ -70,6 +73,8 @@ class roomManager{
                     people.playerid=userid;
                     //房间内添加player
                     r.addPeople(people);
+                    PlayerManager.addPlayerById(userid,people);
+                    console.log("ROOM SOCKET ID IS ->"+r.devSocket.id);
                 }
                 else{
                     //获取到player并更新其socket对象
@@ -89,6 +94,12 @@ class roomManager{
         //清空用户数据
         this.rooms={};
         PlayerManaer.list={};
+    }
+    removeRoom(room)
+    {
+        this.rooms[room.roomid]=null;
+        room=null;
+        //this.rooms={'id'};
     }
 }
 module .exports=roomManager.getInstance();

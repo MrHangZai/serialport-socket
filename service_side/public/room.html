@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="js/socket.io.js"></script>
+</head>
+<body onload="init()">
+<label>房间编号</label>
+<br>
+<input type="text" id="roomid">
+<button id="add" onclick="add()">增加</button>
+<br>
+<label>房间信息</label>
+<br>
+<textarea id="log" style="height: 600px; width: 600px" ></textarea>
+</body>
+<script>
+    var SO={
+        io:null,
+        devid:"1",
+        init:function(){
+            console.log('init');
+            //return;
+            switch (window.location.href.indexOf("localhost")>=0)
+            {
+                case true:
+                    SO.io=io('http://localhost:3000');
+                    break;
+                default:
+                    SO.io=io();
+                    break;
+            }
+
+            //return;
+            SO.io.on('connect',function(data){
+                //console.log("connected "+data);
+                //SO.io.emit('peoplereg',{devid:SO.devid});
+                //SO.io.emit('reg',{id:userid});
+                console.log('ROOM MAN IN');
+            });
+            SO.io.on('event',function(e){
+                console.log(e);
+            });
+            SO.io.on('error',function(e){
+                console.log(e);
+            })
+            SO.io.on('state',function(data){
+                //console.log(data);
+                document.getElementById('log').value=JSON.stringify(data);
+            })
+        }
+    }
+    function init(){
+        setTimeout(function(){ SO.init();},1000);
+        document.getElementById('log').value='LOG';
+
+    };
+    function add()
+    {
+        var id=document.getElementById('roomid').value;
+        console.log(id);
+        SO.io.emit('devreg',{data:id});
+    }
+</script>
+</html>

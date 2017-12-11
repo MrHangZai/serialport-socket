@@ -4,6 +4,10 @@
 class PlayerManaer{
 
     //list:{}
+    static init()
+    {
+        PlayerManaer.list={};
+    }
     static getPlayerById(id)
     {
         if(PlayerManaer.list[id]) return PlayerManaer.list[id];
@@ -11,7 +15,7 @@ class PlayerManaer{
     }
     static addPlayerById(id,player)
     {
-        if(PlayerManaer.list[id]) PlayerManaer.list[id]=player;
+        if(!PlayerManaer.list[id]) PlayerManaer.list[id]=player;
     }
     static removePlayerById(id)
     {
@@ -20,4 +24,5 @@ class PlayerManaer{
     }
     
 }
+PlayerManaer.init();
 module .exports=PlayerManaer;

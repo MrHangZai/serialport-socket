@@ -4,14 +4,17 @@
 let SOC=require('socket.io');
 class room{
 
-    constructor(id){
+    constructor(id,roomm){
         this.list=[];
         this._devScoket=null;
         this.roomid=id;
+        //this.rm=
+        this.rm=roomm;
     }
-    async set devSocket(soc)
+    set devSocket(soc)
     {
         this._devSocket=soc;
+
         this._devSocket.on('catch',(data)=>{
             //通知当前用户获取到娃娃
             //{'catchid':'123'};
@@ -30,6 +33,14 @@ class room{
                 this.currentPeople.socket.emit('yourturn');
             }
         });
+        this._devSocket.on('disconnect',(e)=>{
+            if(this.rm)
+            {
+                this.rm.removeRoom(this);
+            }
+        });
+        console.log("房间 SOCKET =>",soc.id);
+        this.telMyState();//通知我的当前状态
     }
     set roomid(id)
     {
@@ -46,10 +57,12 @@ class room{
     }
     addPeople(player)
     {
+        console.log("room s of  =>",this.devSocket.id);
+        console.log('get new arrivaler');
         this.list.push(player);
         player.roomid=this.roomid;
-        //console.log(this.devSocket);
         player.group=this.list;
+
 
         //弹幕事件
         player.socket.on('commit',(data)=>{
@@ -84,6 +97,15 @@ class room{
             setTimeout(this.resetStatus,3000);
             if(player==this.currentPeople) this.devSocket.emit('catch');
         });
+
+        player.socket.on('out',()=>{
+            player.remove();
+            this.telUpdate();//通知每个用户的排名状态
+
+            this.telMyState();//通知我的当前状态
+
+        })
+
         /*player.onRemove=(p)=>{
             console.log(this.devSocket);
             this.devSocket.emit('init');
@@ -98,7 +120,9 @@ class room{
             if(this.isCatching) return;
             this.devSocket.emit('init');
         });
-        //this.devScoket.emit('init');
+        //this.devSocket.emit('')
+        this.telMyState();
+        this.telUpdate();
     };
     get currentPeople()
     {
@@ -131,9 +155,23 @@ class room{
         {
             let people=this.list[i];
             //更新当前用户的排名情况，返回当前用户的队列顺序，以及当前房间的总排队人数
-            people.socket.emit('updatetrun',{'turnnumber':i,'totalnumber':listnumber,roomid:rid});
+            people.socket.emit('updateturn',{'turnnumber':i,'totalnumber':listnumber,roomid:rid});
         }
     }
+    //通知我的当前状态
+    telMyState()
+    {
+        var a=[];
+        this.list.forEach((p)=>{
+            a.push(p.playerid);
+        })
+        this.devSocket.emit('state',{
+            roomid:this.roomid,
+            childrenLength:this.list.length,
+            children:a
+        });
+    }
+
 
 
     //init(http){

@@ -1,6 +1,7 @@
 /**
  * Created by shin on 2017/11/15.
  */
+    var PM=require('./PlayerManaer.js');
 class player{
 
     constructor(_socket){
@@ -26,13 +27,15 @@ class player{
     set socket(_s)
     {
         this._socket=_s;
-        this._socket=socket;
         this._socket.on('disconnect',(e)=>{
             console.log(this._socket+"disconnect");
             //this.remove();
             //移除当前socket
+
             this.removeSocket();
+            console.log('i am removed');
         });
+
     }
     removeSocket()
     {
@@ -54,6 +57,7 @@ class player{
 
     remove()
     {
+        console.log("REMOVE "+this.playerid+"  FROM  "+this.roomid);
         if(this.group)
         {
             var g=this.group;
@@ -63,8 +67,10 @@ class player{
                 {
 
                     this.removeSocket();
+
                     g.splice(i,1);
                     this._group=null;
+                    PM.removePlayerById(this.playerid);
                     //this.onRemove(this);
                     return;
                 }
