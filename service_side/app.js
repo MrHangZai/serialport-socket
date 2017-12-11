@@ -24,3 +24,8 @@ app.get('/chat/', function(req, res){
 app.get('/abc/', function(req, res){
     res.send('<h1>Welcome abc Server</h1>'+room.chatHistory);
 });
+app.get('clearAllData',function(req){
+    "use strict";
+    //清理
+
+})

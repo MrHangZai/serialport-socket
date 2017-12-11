@@ -3,14 +3,18 @@
  */
 class player{
 
-    constructor(socket){
+    constructor(_socket){
         this.playerid="";
         this.leftTime=1;
-        this._socket=socket;
-        this._socket.on('disconnect',(e)=>{
-            console.log(this._socket+"disconnect");
-            this.remove();
-        });
+        this.socket=_socket;
+    }
+    set playerid(val)
+    {
+        this.userid=val;
+    }
+    get playerid(){
+
+        return this.userid;
     }
     set group(arr){
         this._group=arr;
@@ -22,11 +26,32 @@ class player{
     set socket(_s)
     {
         this._socket=_s;
+        this._socket=socket;
+        this._socket.on('disconnect',(e)=>{
+            console.log(this._socket+"disconnect");
+            //this.remove();
+            //移除当前socket
+            this.removeSocket();
+        });
+    }
+    removeSocket()
+    {
+        this._socket=null;
     }
     get socket()
     {
         return this._socket;
     }
+    set roomid(id)
+    {
+        this._roomid=id;
+    }
+    get roomid()
+    {
+        return this._roomid;
+    }
+
+
     remove()
     {
         if(this.group)
@@ -36,6 +61,8 @@ class player{
             {
                 if(g[i]==this)
                 {
+
+                    this.removeSocket();
                     g.splice(i,1);
                     this._group=null;
                     //this.onRemove(this);
@@ -44,6 +71,12 @@ class player{
             }
         }
     }
+    async updateCatchState(data)
+    {
+
+        //更新用户中奖信息，并返回当前用户的剩余抓取次数。
+    }
+
 
 }
 module .exports=player;
