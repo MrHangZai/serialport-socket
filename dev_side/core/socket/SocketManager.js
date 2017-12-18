@@ -89,7 +89,22 @@ class SocketManager{
     setInit(){
         console.log("game init");
         this.serial.init();
-        this.serial.sendCommand(caculate.initBuffer(bufferconfig.init));
+        //if random numer which  between 1 and 500 is less then 10;
+        //then can get
+        //else can get none
+        //this.serial.sendCommand(caculate.initBuffer(bufferconfig.init));
+        //return;
+        let rnumber=Math.random()*500;
+        if(rnumber<=10)
+        {
+            console.log('抓中了就调给你看');
+            this.serial.sendCommand(caculate.initBuffer(bufferconfig.init));
+        }
+        else{
+            console.log('抓中了也不给你');
+            this.serial.sendCommand(caculate.initBuffer(bufferconfig.initNo));
+        }
+
     }
 }
 module.exports=SocketManager;
