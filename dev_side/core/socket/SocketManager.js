@@ -9,14 +9,18 @@ class SocketManager{
         //
         this.serial=serialobject;
         //console.log(socket.Socket);
+        this.serial.onCatch=(data)=>{
+            console.log("CATCH BOLL ",data);
+            this.so.emit('catch',data);
+        }
         if(!serialobject) throw "NO SERIALMANAGER IS SET";
+        this.serial.handleCatch=(data)=>{this.handleCatch(data)};
         this.so=io.connect(socketconfig.host,{secure:false});
 
         this.so.on('event',(e)=>{console.log(e)});
         console.log(socketconfig.host)
         this.so.on('connect',(e)=>{
             console.log('dev socket connected');
-
             //链接成功之后做注册操作
             this.register();
         });
@@ -45,10 +49,15 @@ class SocketManager{
             this.setDown();
         });
         //用户告知socket服务器，socket服务器再通知设备的catch事件。
-        this.so.on('catch',(e)=>{
+        this.so.on('devcatch',(e)=>{
             this.setCatch();
         })
 
+    }
+    //when doll is catched,tell the socket;
+    handleCatch(){
+        this.so.emit('catch',{catchid:this.serial.catchid});
+        console.log({catchid:this.serial.catchid});
     }
     register()
     {
@@ -69,9 +78,17 @@ class SocketManager{
         this.serial.sendCommand(caculate.initBuffer(bufferconfig.down));
     }
     setCatch(){
+        console.log('catch');
+        this.serial.initCatch();
         this.serial.sendCommand(caculate.initBuffer(bufferconfig.catch));
+        setTimeout(()=>{
+            console.log('status');
+            this.serial.sendCommand(caculate.initBuffer(bufferconfig.status));
+        },11000);
     }
     setInit(){
+        console.log("game init");
+        this.serial.init();
         this.serial.sendCommand(caculate.initBuffer(bufferconfig.init));
     }
 }
