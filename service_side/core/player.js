@@ -40,6 +40,14 @@ class player{
                 this.room.boardCast(data);
             }
             //广播事件
+        });
+        this.socket.on('disconnect',()=>{
+            try{
+                this.socket=null;
+            }
+            catch(e){
+
+            };
         })
 
         this.socket.on('init',()=>{
