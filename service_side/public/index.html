@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>控制器测试</title>
+    <meta name="viewport" content="width=203, user-scalable=no" />
     <script src="js/socket.io.js"></script>
     <style>
         *{
@@ -15,21 +16,41 @@
             float: left;
             text-align: center;
         }
+        .buttons{
+            width: 203px;
+            height: 203px;
+        }
+        .btn{
+            width: 30%;
+            height: 30%;
+            margin: 1px 1px 1px 1px;
+            float: left;
+        }
+        .can{
+            background: #000066;
+            text-align: center;
+            font-size: 20px;
+            color: #ffffff;
+            border-radius: 20px 20px 20px 20px;
+        }
     </style>
 </head>
 <body onload="init()">
     <div class="controler" style="width: 220px; height: 420px; background: #fff">
         <label>用户id</label><input type="text" id="userid">
-        <div class="button" onclick="clickBtn(1)">UP</div>
-        <div class="button"  onclick="clickBtn(2)">DOWN</div>
-        <div class="button"  onclick="clickBtn(3)">LEFT</div>
-        <div class="button"  onclick="clickBtn(4)">RIGHT</div>
-        <div class="button" onclick="clickBtn(5)" style="width: 203px; height: 100px; background: #006666"> CATCH</div>
-        <div class="button" onclick="clickBtn(6)" style="width: 203px; height: 100px; background: #006666"> RESET</div>
-        <div class="button" onclick="clickBtn(7)" style="width: 203px; height: 100px; background: #006666"> IN</div>
-        <label>加入房间</label><input type="text" id="roomid">
-        <div class="button" onclick="clickBtn(8)" style="width: 203px; height: 100px; background: #006666"> 加入房间</div>
-        <div class="button" onclick="clickBtn(9)" style="width: 203px; height: 100px; background: #006666"> 离开房间</div>
+        <div class="buttons">
+            <div class="btn"></div><div class="btn can" onclick="clickBtn(1)">UP</div><div class="btn"></div>
+            <div class="btn can" onclick="clickBtn(3)">LEFT</div><div class="btn"></div><div class="btn can" onclick="clickBtn(4)">RIGHT</div>
+            <div class="btn"></div><div class="btn can" onclick="clickBtn(2)">DOWN</div><div class="btn"></div>
+        </div>
+
+        <div class="button" onclick="clickBtn(5)" style="width: 203px; height: 50px; background: #006666"> CATCH</div>
+        <div class="button" onclick="clickBtn(6)" style="width: 203px; height: 50px; background: #006666"> 重新开始玩游戏</div>
+        <div class="button" onclick="clickBtn(10)" style="width: 203px; height: 50px; background: #006666"> 广播评论</div>
+        <div class="button" onclick="clickBtn(7)" style="width: 203px; height: 50px; background: #006666"> IN</div>
+        <label>roomid</label><input type="text" id="roomid">
+        <div class="button" onclick="clickBtn(8)" style="width: 203px; height: 50px; background: #006666"> 加入房间</div>
+        <div class="button" onclick="clickBtn(9)" style="width: 203px; height: 50px; background: #006666"> 离开房间</div>
     </div>
 </body>
 <script>
@@ -45,7 +66,14 @@
             switch (window.location.href.indexOf("localhost")>=0)
             {
                 case true:
-                    SO.io=io('http://localhost:3000');
+                        try{
+                            SO.io=io('http://localhost:3000');
+                        }
+                        catch(e)
+                        {
+                            console.log(e);
+                        }
+
                     break;
                 default:
                     SO.io=io();
@@ -58,6 +86,12 @@
                 //SO.io.emit('peoplereg',{devid:SO.devid});
                 SO.io.emit('peoplein',{id:userid});
             });
+            SO.io.on('disconnect',function(e){
+                 //console.log("DRROR");
+            });
+            SO.io.on('connect_failed',function(){
+                console.log('RE CONNECT');
+            });
             SO.io.on('event',function(e){
                 console.log(e);
             });
@@ -66,9 +100,35 @@
             })
             SO.io.on('state',function(data){
                 console.log(data);
+                var rid=data['']
             });
             SO.io.on('updateturn',function(data){
                 console.log(data)
+            });
+            SO.io.on('regfail',function(data){
+                console.log(data)
+            })
+            SO.io.on('regdone',function(data){
+                console.log(data)
+            })
+            SO.io.on('red',function(){
+                console.log('开始领红包拉！')
+            })
+            SO.io.on('catch',function(data){
+                alert('抓到娃娃拉=>'+data['catchid']);
+            });
+            SO.io.on('chat',function(data){
+                console.log('CHAT=>',data);
+            })
+            SO.io.on('beremoved',function(data){
+                if(data['msg']=='2')
+                {
+                    alert('我从房间'+data['roomid']+'里被移除了!:'+data['msg']);
+                }
+                else{
+                    alert('你离开了房间'+data['roomid']);
+                }
+
             })
         }
     }
@@ -100,8 +160,8 @@
                 SO.io.emit('init');
                 break;
             case 7:
-                    userid=document.getElementById('userid').value || userid;
-                SO.io.emit('peoplein',{id:userid});
+                userid=document.getElementById('userid').value || userid;
+                SO.io.emit('peoplein',{'userid':userid});
                 break;
             case 8:
                 roomid=document.getElementById('roomid').value;
@@ -109,6 +169,10 @@
                 break;
             case 9:
                 SO.io.emit('out');
+                break;
+            case 10:
+                userid=document.getElementById('userid').value || userid;
+                SO.io.emit('commit',{'userid':userid,msg:'wechattest'});
                 break;
         }
     }

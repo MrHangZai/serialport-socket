@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=640px, user-scaleable=no">
+    <title>房间监控</title>
+    <script src="js/jquery-3.1.0.min.js"></script>
+</head>
+<style>
+    *{
+        margin: 0 0;
+    }
+    html,body{
+        width: 100%;
+    }
+    .content{
+        width: 100%;
+        height: 800px;
+    }
+    .com{
+        width: 100%;
+        height: 25%;
+        border-radius: 20px 20px 0 0 ;
+        background: #30404f;
+        color: #ffffff;
+        font-size: 10px;
+        overflow: hidden;
+        margin-top: 10px;
+    }
+    .comtitle{
+        width: 100%;
+        height: 15px;
+
+
+    }
+    .com div{
+        padding-left: 20px;
+    }
+    .comtitle{
+        padding-left: 30px;
+    }
+    .comtitle_name{
+        text-align: center;
+    }
+    label{
+        color:#b5d592;
+    }
+    .squencearea{
+        width: 100%;
+        overflow-y: scroll;
+       height: 150px;
+    }
+</style>
+<body onload="init()">
+<div class="content">
+
+</div>
+</body>
+<script src="js/watch/Template.js"></script>
+<script src="js/socket.io.js"></script>
+<script src="js/watch/Socket.js"></script>
+<script>
+    function init(){
+        SO.init();
+    }
+</script>
+</html>

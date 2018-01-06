@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #J_prismPlayer{
+            width: 640px;
+            height: 640px;
+        }
+
+    </style>
+    <link rel="stylesheet" href="//g.alicdn.com/de/prismplayer/2.4.0/skins/default/aliplayer-min.css" />
+    <script type="text/javascript" src="//g.alicdn.com/de/prismplayer/2.4.0/aliplayer-min.js"></script>
+</head>
+<body onload="init()">
+<div class="btn" style="width: 100%; height: 60px; text-align: center; background: #000;color: #ffff00" id="btn">  TSET VIDEO </div>
+<div  class="prism-player" id="J_prismPlayer" style="position: absolute"></div>
+
+</body>
+<script>
+    var player ;
+    function init(){
+        player=new Aliplayer({
+            id: 'J_prismPlayer',
+            width: '100%',
+            autoplay: false,
+            //支持播放地址播放,此播放优先级最高
+            source : 'http://lrl20171010012live.comeyes.cn/live/room1_2.m3u8'
+            //播放方式二：点播用户推荐
+        },function(player){
+            console.log('播放器创建好了。')
+        });
+    };
+    btn.addEventListener('click',function(){
+        player.play();
+    })
+</script>
+</html>

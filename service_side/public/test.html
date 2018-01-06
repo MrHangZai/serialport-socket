@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+<script src="js/jquery-3.1.0.min.js"></script>
+<script>
+    function postItem(){
+        this.url='https://lrl201710100101.ews.m.jaeapp.com/useLotteryNumber';
+        this.content='m01rnpYL1jjlbUFjZPxDubOzVoVwiXtXNvO8NfHkgAOREI%3D';
+        this.time=new Date().getTime();
+        var self=this;
+        $.ajax({url:this.url,
+            type:'post',
+            data:{userId:this.content},
+            success:function(msg){
+                console.log(msg);
+                var  ntime=new Date().getTime();
+                console.log('access cost ' + (ntime-self.time)+" senconds");
+            }
+        })
+    };
+    var tc=1;
+    var inter=0;
+    $(document).ready(function(){
+
+           /* inter=setInterval(function(){
+                if(tc>=20) clearInterval(inter);
+                tc++;
+                var item=new postItem();
+            },500)*/
+        for(var i=0;i<100;i++)
+        {
+            var item=new postItem();
+        }
+
+    });
+</script>
+</html>

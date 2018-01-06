@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="spm-id" content="a1z51.24720434"/>
+    <title>视频对接</title>
+    <style>
+        *{
+            margin: 0 0;
+        }
+    </style>
+</head>
+<body>
+<div class="btn" style="width: 100%; height: 60px; text-align: center; background: #000;color: #ffff00" id="btn">  TSET VIDEO </div>
+</body>
+<script type="text/javascript" src="//g.alicdn.com/tmapp/tida/3.2.114/tida.js?appkey=24720434"></script>
+<script>
+    var btn=document.getElementById('btn');
+
+    Tida.ready({},function(data){
+        //alert(JSON.stringify(data));
+        Tida.doAuth(true,function(data){
+            alert(JSON.stringify(data));
+            //alert(window.location.href);
+            //tmAUTH();
+            //playTmallVideo('http://cloud.video.taobao.com/play/u/3129324064/p/1/e/6/t/1/51756850.mp4');
+        });
+    });
+    btn.addEventListener('click',function(e){
+        //alert('click')
+        //try{
+        TMALLVIDEO.playTmallVideo("rtmp://ovmeet.ovmeet.com:1937/live/2222");
+        //}
+        //catch (e)
+        //{
+         //   alert(JSON.stringify(e));
+        //}
+    });
+    var TMALLVIDEO={
+        playTmallVideo:function(src){
+            var UC = navigator.userAgent.match(/UCBrowser/);
+            var wrapWidth = window.screen.width;
+            var wrapHeight = wrapWidth *756/540;
+            var wvWidth;
+            var wvHeight;
+            if(UC){
+                wvWidth = wrapWidth.toString();
+                wvHeight = wrapHeight.toString();
+            }else {
+                wvWidth = (wrapWidth * window.devicePixelRatio).toString();
+                wvHeight = (wrapHeight * window.devicePixelRatio).toString();
+            };
+            Tida.openInteractVideo({
+                'videoUrl': src, //视频url可以通过TOP接口//open.taobao.com/doc2/apiList.htm?scopeId=12283获取
+                'width' :wvWidth, // 整数，视频的宽度，现在只能是屏幕的宽度
+                'height': wvWidth, // 整数，视频高度
+                'from': "ISV", //视频来源，用来确定互动方案的来源
+                'userId' : "111030208", //视频编辑者的userId,需要用淘宝授权方式获取到
+                'interactiveVideoId' : "", //互动视频id，店铺2楼的可写空
+                'showCloseBtn' : "false", //是否显示关闭按钮
+                'processKeyBackEvent' : true //（仅Android端支持）在点击返回键时，是否需要关闭视频；取值为“true”、“false”
+            }, function (e){
+                alert("ERROR"+JSON.stringify(e));
+            });
+        }
+    }
+</script>
+</html>

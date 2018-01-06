@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>房间测试</title>
     <script src="js/socket.io.js"></script>
 </head>
 <body onload="init()">
@@ -13,15 +13,20 @@
 <br>
 <label>房间信息</label>
 <br>
-<textarea id="log" style="height: 600px; width: 600px" ></textarea>
+<textarea id="log" style="height: 50px; width: 600px" ></textarea>
+<div style="width: 600px; height: 600px; overflow: hidden; position: relative">
+    <div style="width: 50px; height: 50px; position: absolute; border-radius: 40px 40px 40px 40px; background: #ff0000" id="sp"></div>
+</div>
 </body>
 <script>
     var SO={
         io:null,
         devid:"1",
+        ob:'',
         init:function(){
             console.log('init');
             //return;
+            SO.ob=new obj('sp');
             switch (window.location.href.indexOf("localhost")>=0)
             {
                 case true:
@@ -48,6 +53,30 @@
             SO.io.on('state',function(data){
                 //console.log(data);
                 document.getElementById('log').value=JSON.stringify(data);
+            });
+            var sp=SO.ob;
+            SO.io.on('up',function(){
+                sp.y-=2;
+                console.log(sp.y,sp.x);
+            });
+            SO.io.on('down',function(){
+                sp.y+=2;
+                console.log(sp.y,sp.x);
+            });
+            SO.io.on('left',function(){
+                sp.x-=2;
+                console.log(sp.y,sp.x);
+            });
+            SO.io.on('right',function(){
+                sp.x+=2;
+                console.log(sp.y,sp.x);
+            })
+
+            SO.io.on('init',function(){
+             sp.x=sp.y=0;
+            })
+            SO.io.on('catch',function(){
+                alert('正在抓取');
             })
         }
     }
@@ -62,5 +91,34 @@
         console.log(id);
         SO.io.emit('devreg',{data:id});
     }
+    function obj(_div){
+        this.sp=document.getElementById(_div);
+        this.x=0;
+        this.y=0;
+        var self=this;
+
+    }
+    Object.defineProperty(obj.prototype,'x',{
+        get:function(){
+            return this._x;
+        },
+        set:function(val){
+            this._x=val;
+            this.sp.style['left']=val+'px';
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(obj.prototype,'y',{
+        get:function(){
+            return this._y;
+        },
+        set:function(val){
+            this._y=val;
+            this.sp.style['top']=val+'px';
+        },
+        enumerable: true,
+        configurable: true
+    })
 </script>
 </html>

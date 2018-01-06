@@ -20,9 +20,17 @@ class PlayerManaer{
     static removePlayerById(id)
     {
         //移除player
+        let p=PlayerManaer.list[id];
+        p=null;
         PlayerManaer.list[id]=null;
     }
-    
+    static showIDS(){
+        let str="";
+        for(var a in PlayerManaer)
+        {
+            str+="PEOPLE IS "+a+"\n";
+        }
+    }
 }
 PlayerManaer.init();
 module .exports=PlayerManaer;
